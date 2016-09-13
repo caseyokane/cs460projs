@@ -6,30 +6,37 @@ function kNN = assignment1kNN()
 
     %Import dataset information
     %TODO: Append them as 1 file?
-    synth1 = csvread('Data\synthetic-1.csv')
-    synth2 = csvread('Data\synthetic-2.csv')
-    synth3 = csvread('Data\synthetic-3.csv')
-    synth4 = csvread('Data\synthetic-4.csv')    
+    synth1 = csvread('Data\synthetic-1.csv');
+    synth2 = csvread('Data\synthetic-2.csv');
+    synth3 = csvread('Data\synthetic-3.csv');
+    synth4 = csvread('Data\synthetic-4.csv');   
     
     %Retrieve appropriate k value from crossValidation using data
     k = crossValidate();
 
 end
 
+function kFoldIndices = cvIndices()
+
+end
 
 %Cross Validation using fold-based method
 function kFold = crossValidate()
 
+    kFoldIndices = cvIndices();
     %Arrange examples in random order 
     %Divide the examples into k fold 
+    cPerf = classperf(labels);
     for i = 1:k
-        %Train classifier using examples not in current fold
         %Test classifier on all examples in current fold
+        test = (kFoldIndices == i);
+        %Train classifier using examples not in current fold
+        train = ~test;
         %Compute number of examples in fold not classified correctly
-        %Keep track of the number of incorrect predictions
-        numWrong = 0;
+        class = classify(vals(test,:),vals(train,:),labels(train,:));
+        classperf(cPerf,class,test);
     end
     %estimate error as sum of all number of failures over # examples
-    kFold = 10;
+    kFold = cPerf.ErrorRate;
 end
 
