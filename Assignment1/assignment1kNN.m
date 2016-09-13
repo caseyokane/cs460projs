@@ -17,6 +17,17 @@ function kNN = assignment1kNN()
 end
 
 function kFoldIndices = cvIndices()
+   [group,groupNames] = grp2idx(N);
+    N = numel(group);
+    nS = accumarray(group(:),1);
+    tInd = zeros(n,1);
+    for g = 1:numel(nS)
+        h = find(group==g);
+        q = ceil(K*(1:nS(g))/nS(g));
+        pq = randperm(K);
+        randInd = randperm(nS(g));
+        tInd(h(randInd))= pq(q);
+    end
 
 end
 

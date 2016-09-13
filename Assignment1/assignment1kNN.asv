@@ -6,29 +6,48 @@ function kNN = assignment1kNN()
 
     %Import dataset information
     %TODO: Append them as 1 file?
-    synth1 = csvread('Data\synthetic-1.csv')
-    synth2 = csvread('~\Data\synthetic-2.csv')
-    synth3 = csvread('~\Data\synthetic-3.csv')
-    synth4 = csvread('~\Data\synthetic-4.csv')    
+    synth1 = csvread('Data\synthetic-1.csv');
+    synth2 = csvread('Data\synthetic-2.csv');
+    synth3 = csvread('Data\synthetic-3.csv');
+    synth4 = csvread('Data\synthetic-4.csv');   
     
     %Retrieve appropriate k value from crossValidation using data
     k = crossValidate();
 
 end
 
+function kFoldIndices = cvIndices()
+    %[group,groupNames] = grp2idx(N)
+    %N=numel(group);
+    %nS = accumarray(group(:),1);
+    %tInd = zeros(n,1);
+    for g = 1:numel(nS)
+        h = find(group==g);
+        q = ceil(K*(1:nS(g))/nS(g));
+        pq = randperm(K);
+        randInd = randperm(nS(g));
+        tInd(h(randInd))= pq(q);
+      
+
+end
 
 %Cross Validation using fold-based method
 function kFold = crossValidate()
 
-    %Keep track of the number of incorre
-    numWrong = 0;
+    kFoldIndices = cvIndices();
     %Arrange examples in random order 
     %Divide the examples into k fold 
-    %for i = 1...k
-        %Train classifier using examples not in current fold
+    cPerf = classperf(labels);
+    for i = 1:k
         %Test classifier on all examples in current fold
+        test = (kFoldIndices == i);
+        %Train classifier using examples not in current fold
+        train = ~test;
         %Compute number of examples in fold not classified correctly
+        class = classify(vals(test,:),vals(train,:),labels(train,:));
+        classperf(cPerf,class,test);
+    end
     %estimate error as sum of all number of failures over # examples
-    kFold = 10;
+    kFold = cPerf.ErrorRate;
 end
 
