@@ -4,8 +4,13 @@
 %kNN Implementation
 
 
-function kNN = kNN(testPoint, k, trainingPoints, trainingLabels)
+function kNNLabel = kNN(testPoint, k, trainingPoints, trainingLabels)
 
-    %Calculate Euclidean distance using L2
+    %Using feature x instance table 
+    %Calculate Euclidean distance using L2_distance.m
+    %determine distance between test point and k training points
+    %sort to find smallest distance
+    %return label of shortest 
+    
 
 end

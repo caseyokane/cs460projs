@@ -32,17 +32,17 @@ function kFoldIndices = cvIndices(observations, numFolds)
     
     N = numel(group); %Number of disjoint sets   
     nS = accumarray(group(:),1); %nS is number of elements for each label
-    tInd = zeros(N,1); %Initialize Matrix of Zeros based on N
+    kFoldIndices = zeros(N,1); %Initialize Matrix of Zeros based on N
     
     %iterate through the number of labels
-    for g = 1:numel(nS)
-        h = find(group==g); %return indices for label in range
-        q = ceil(numFolds *(1:nS(g))/nS(g));%Create array of ceiling values
+    for i = 1:numel(nS)
+        h = find(group==i); %return indices for label in range
+        q = ceil(numFolds *(1:nS(i))/nS(i));%Create array of ceiling values
         %determined by the number of folds and label values
         
         kPerms = randperm(numFolds); 
-        randInd = randperm(nS(g));
-        tInd(h(randInd)) = kPerms(q);
+        randInd = randperm(nS(i));
+        kFoldIndices(h(randInd)) = kPerms(q);
     end
     
 end
