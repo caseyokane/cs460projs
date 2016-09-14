@@ -1,53 +1,19 @@
 %CS460 - Machine Learning 
 %Assignment 1 - Implementing kNN
 %Casey O'Kane 
+%Assignment 1 Driver
 
-function kNN = assignment1kNN()
+function main = assignment1kNN()
 
     %Import dataset information
-    %TODO: Append them as 1 file?
+    %TODO: Add column labels?
     synth1 = csvread('Data\synthetic-1.csv');
     synth2 = csvread('Data\synthetic-2.csv');
     synth3 = csvread('Data\synthetic-3.csv');
     synth4 = csvread('Data\synthetic-4.csv');   
     
     %Retrieve appropriate k value from crossValidation using data
-    k = crossValidate();
+    k = crossValidate(synth1, 10);
 
-end
-
-function kFoldIndices = cvIndices()
-   [group,groupNames] = grp2idx(N);
-    N = numel(group);
-    nS = accumarray(group(:),1);
-    tInd = zeros(n,1);
-    for g = 1:numel(nS)
-        h = find(group==g);
-        q = ceil(K*(1:nS(g))/nS(g));
-        pq = randperm(K);
-        randInd = randperm(nS(g));
-        tInd(h(randInd))= pq(q);
-    end
-
-end
-
-%Cross Validation using fold-based method
-function kFold = crossValidate()
-
-    kFoldIndices = cvIndices();
-    %Arrange examples in random order 
-    %Divide the examples into k fold 
-    cPerf = classperf(labels);
-    for i = 1:k
-        %Test classifier on all examples in current fold
-        test = (kFoldIndices == i);
-        %Train classifier using examples not in current fold
-        train = ~test;
-        %Compute number of examples in fold not classified correctly
-        class = classify(vals(test,:),vals(train,:),labels(train,:));
-        classperf(cPerf,class,test);
-    end
-    %estimate error as sum of all number of failures over # examples
-    kFold = cPerf.ErrorRate;
 end
 
