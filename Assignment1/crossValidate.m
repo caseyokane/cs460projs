@@ -7,28 +7,29 @@
 function kFold = crossValidate(dataMeas, dataLabs, numFolds)
 
     kFoldIndices = cvIndices(dataLabs, numFolds);
-    %Arrange examples in random order 
-    %Divide the examples into k fold 
     cPerf = classperf(dataLabs);
     
+    kFold = zeros([numFolds 1]);
+    
     %Iterate based on number of folds
-    for i = 1:numFolds
+    for iFold = 1:numFolds
         %Test classifier on all examples in current fold
-        test = (kFoldIndices == i);
+        test = (kFoldIndices == iFold);
         %Train classifier using examples not in current fold
         train = ~test;
         %Compute number of examples in fold not classified correctly
         class = classify(dataMeas(test,:),dataMeas(train,:),dataLabs(train,:));
         classperf(cPerf,class,test);
+        %estimate error as sum of all number of failures over # examples
+        kFold(iFold) = cPerf.ErrorRate;
     end
-    %estimate error as sum of all number of failures over # examples
-    kFold = cPerf.ErrorRate;
+
 end
 
 %Helper function used to generate indices from labels and numFolds
 function kFoldIndices = cvIndices(observations, numFolds)
-    [group, groupLabels] = grp2idx(observations); %create group array with 
-    %with numbers that represent labels
+    %create group array with with numbers that represent labels
+    group = grp2idx(observations); 
     
     N = numel(group); %Number of disjoint sets   
     nS = accumarray(group(:),1); %nS is number of elements for each label
