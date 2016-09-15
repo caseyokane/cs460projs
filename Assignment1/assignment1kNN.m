@@ -15,13 +15,24 @@ function main = assignment1kNN()
     %Retrieve appropriate k value from crossValidation using data
     %k = crossValidate(synth1, 10);
     %For each collection of synthetic data 
+    lowestKerr = 1; lowestKerrInd = 0;
+    cvErrMat = zeros([10 2]); cvErrMat(:,1) = 1:10;
     for dataCtr = 1:4
-        %For each initial K guess from 1-10
-        for initK = 1:10
-            %append crossvalidate error rate to matrix 
+        %For each initial K guess from 2-10
+        for initK = 2:10
+            %Call the cvFunction
+            cvErr = crossValidate(meas, species, initK);
+            %append crossvalidate error rate to matrix
+            cvErrMat(initK,2) = cvErr;
             %find lowest error rate for best k value
-            %create table k vs. error  and graph it 
+            if cvErr < lowestKerr
+                lowestKerr = cvError; lowestKerrInd = initK;
+            end
         end
+        
+        %graph cvErrMat to show k vs. error 
+        
+        %best k value is found as lowestKerrInd
         
         %with value for k, call kNN.m to return predicted class label
         %append the predicted labels to a matrix to check if they are right
