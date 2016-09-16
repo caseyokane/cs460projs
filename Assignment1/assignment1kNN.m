@@ -15,13 +15,14 @@ function main = assignment1kNN()
     synthCell{1} =synth1; synthCell{2} =synth2; synthCell{3} =synth3;
     synthCell{4} =synth4;
     
-    %For each collection of synthetic data 
+
     lowestKErr = 1; lowestKErrInd = 0;
     cvErrMat = zeros([10 2]); cvErrMat(:,1) = 1:10;
-    
+    %For each collection of synthetic data 
     %for dataCtr = 1:4
     
         %Set the data to the currently used synthesized data
+        %currSynthData = synthCell{dataCtr};
         currSynthData = synthCell{2};
         %Get measurements and labels 
         synthMeas = currSynthData(:,1:2); synthLabs = currSynthData(:,3);
@@ -41,7 +42,10 @@ function main = assignment1kNN()
 %         title('Average Misclassification Error Rate');
 %         xlabel('Number of Folds'); 
 %         ylabel('Misclassification Error');
-        
+
+        %Call decision tree implementation 
+        dTree = dTreeTrain(synthMeas);
+
         %Keep track of the kNN labels for each test point (row)
         predictLabs = zeros([numel(testData(:,1)) lowestKErrInd]);
         numCorrect = 0;
@@ -63,8 +67,6 @@ function main = assignment1kNN()
         
         kNNAccuracy = numCorrect / numel(predictLabs)
         %Graph results using decision boundary
-
-        %Call decision tree implementation 
 
     %end
 
