@@ -52,8 +52,7 @@ function main = assignment1kNN()
             %points for the passed test point.
             predictLabs(testPtCtr,:) = kNN(testData(testPtCtr,1:2), lowestKErrInd, trainMeas, trainLabs);
             %testkNN labels on test Data 
-            %For all of the predicted labels
-            
+            %For all predicted labs check that predicted matches test lab
             for labCtr = 1:numel(predictLabs(testPtCtr,:))
                 if predictLabs(testPtCtr,labCtr) == testData(testPtCtr,3)
                     numCorrect = numCorrect + 1;
@@ -62,8 +61,8 @@ function main = assignment1kNN()
           
         end
         
-        kNNAccuracy = numCorrect / numel(testData(:,1))
-        
+        kNNAccuracy = numCorrect / numel(predictLabs)
+        %Graph results using decision boundary
 
         %Call decision tree implementation 
 
