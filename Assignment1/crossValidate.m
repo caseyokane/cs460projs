@@ -4,12 +4,12 @@
 %Cross Validation Functions
 
 %Cross Validation using fold-based method
-function kFold = crossValidate(dataMeas, dataLabs, numFolds)
+function [kFoldErr,testData,trainMeas,trainLabs] = crossValidate(dataMeas, dataLabs, numFolds)
 
     kFoldIndices = cvIndices(dataLabs, numFolds);
     cPerf = classperf(dataLabs);
     
-    kFold = zeros([numFolds 1]);
+    kFoldErr = zeros([numFolds 1]);
     
     %Iterate based on number of folds
     for iFold = 1:numFolds
@@ -17,11 +17,15 @@ function kFold = crossValidate(dataMeas, dataLabs, numFolds)
         test = (kFoldIndices == iFold);
         %Train classifier using examples not in current fold
         train = ~test;
+        %Store test data (measurements and labels)
+        testData = [dataMeas(test,:) dataLabs(test,:)]; 
+        %Store train measurements and labels seperately
+        trainMeas = dataMeas(train,:); trainLabs = dataLabs(train,:);
         %Compute number of examples in fold not classified correctly
-        class = classify(dataMeas(test,:),dataMeas(train,:),dataLabs(train,:));
+        class = classify(testData(:,1:2),trainMeas,trainLabs);
         classperf(cPerf,class,test);
         %estimate error as sum of all number of failures over # examples
-        kFold(iFold) = cPerf.ErrorRate;
+        kFoldErr(iFold) = cPerf.ErrorRate;
     end
 
 end
