@@ -6,6 +6,9 @@
 function [bestSplit, finalLBranch, finalRBranch] = findBestSplit(possSplits, splitMeas)
     
      bestGini = 1; finalLBranch = []; finalRBranch = [];
+     if isempty(possSplits)
+         bestSplit = 0;
+     else
      %Iterate along each split 
         for splitCtr = 1:numel(possSplits(:,1))
             lBranch = []; rBranch = [];
@@ -15,10 +18,12 @@ function [bestSplit, finalLBranch, finalRBranch] = findBestSplit(possSplits, spl
                 %if curr measurement <= proposed split place in lBranch else r
                 if splitMeas(measCtr, possSplits(splitCtr,2)) <= possSplits(splitCtr,1)
                     %place in lBranch
-                    lBranch = [lBranch; splitMeas(measCtr, possSplits(splitCtr,2));];
+                    %lBranch = [lBranch; splitMeas(measCtr, possSplits(splitCtr,2));];
+                    lBranch = [lBranch; splitMeas(measCtr, :);];
                 else
                     %place in rBranch
-                    rBranch = [rBranch; splitMeas(measCtr, possSplits(splitCtr,2));];
+                    %rBranch = [rBranch; splitMeas(measCtr, possSplits(splitCtr,2));];
+                    rBranch = [rBranch; splitMeas(measCtr, :);];
                 end    
             end
          
@@ -29,7 +34,8 @@ function [bestSplit, finalLBranch, finalRBranch] = findBestSplit(possSplits, spl
             gini = 1 - sum((numPerBranch(:)/sum(numPerBranch(:))).^2); 
             if gini <= bestGini
                 bestGini = gini;
-                finalLBranch = lBranch; finalRBranch = finalRBranch;
+                finalLBranch = lBranch; 
+                finalRBranch = rBranch;
                 bestSplit = possSplits(splitCtr,1);
             end
             
@@ -38,7 +44,8 @@ function [bestSplit, finalLBranch, finalRBranch] = findBestSplit(possSplits, spl
             %giniInd = sum(( cntMats(:)/sum(cntMats) ).*giniVals(:));
             %end
         end
-     
+
+     end
 
 
 end

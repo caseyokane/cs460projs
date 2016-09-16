@@ -6,8 +6,6 @@
 
 function dTree = dTreeTrain(meas)
     
-    %Tree can only have max depth of 3 and needs a splitValue
-    maxDep = 3; splitVal = 0; possSplits = [];
     %Initialize dTree structure which keeps track of splits 
     %struct: table of Data, variable to split, L/R branches, depth
     f1 = 'tableData'; f2 = 'splitVal'; f3 = 'lBranch'; f4 = 'rBranch';
