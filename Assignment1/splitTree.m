@@ -6,7 +6,7 @@
 function node = splitTree( baseNode, tableData, depth )
 
     possSplits = [];
-    root = baseNode; root.tableData = tableData; root.depth = depth
+    root = baseNode; root.tableData = tableData; root.depth = depth;
     
     if isempty(tableData)
         node = root;
