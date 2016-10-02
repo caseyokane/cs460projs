@@ -39,9 +39,9 @@ function [bestSplit, finalLBranch, finalRBranch] = findBestSplit(possSplits, spl
                 bestSplit = possSplits(splitCtr,1);
             end
             
-                %giniVals = [giniVals, gini];
+            %giniVals = [giniVals, gini];
             %Calculate the gini index
-            %giniInd = sum(( cntMats(:)/sum(cntMats) ).*giniVals(:));
+            %giniInd = sum(( numPerBranch(:)/sum(numPerBranch) ).*giniVals(:));
             %end
         end
 

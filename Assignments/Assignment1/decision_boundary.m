@@ -1,4 +1,4 @@
-function decBound = decision_boundary()
+function decBound = decision_boundary(posResults, negResults)
 % Example code that shows how to plot the function value and a decision
 % boundary for a simple logistic regression model using python
 %
@@ -23,20 +23,21 @@ function decBound = decision_boundary()
     x_min = -5; x_max = 5;
     y_min = -5; y_max = 5;
 
-    [x, y] = meshgrid(linspace(x_min,x_max,200), linspace(y_min,y_max,200));
-
     % evaluate
+    [posResults, negResults] = meshgrid(linspace(x_min,x_max,200), linspace(y_min,y_max,200));
 
-    z = f(expand([x(:) y(:)])); % lets pretend that this is the result of your kNN
-    z = reshape(z, size(x));
-
+    z = f(expand([posResults(:) negResults(:)])); % lets pretend that this is the result of your kNN
+    z = reshape(z, size(posResults));
+    
     % plot
-    figure(1); clf; 
+    figure(); clf; 
     %Gives background color
     imagesc(z, 'XData', [x_min,x_max], 'YData', [y_min,y_max], [0 1])
     hold on
     %Draws decision boundary
-    contour(x,y,z,[.5 .5],'k', 'LineWidth', 2)
+    %contour(x,y,z,[.5 .5],'k', 'LineWidth', 2)
+    contour(posResults,negResults,z,[.5 .5],'k', 'LineWidth', 2)
+
     %Draws points 
     h = scatter(X_samp(:,1), X_samp(:,2), 60, label_samp, 'filled');
     set(h, 'MarkerEdgeColor', 'w')

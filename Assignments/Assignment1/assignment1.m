@@ -18,7 +18,7 @@ synthCell{4} =synth4;
 lowestKErr = 1; lowestKErrInd = 0;
 cvErrMat = zeros([10 2]); cvErrMat(:,1) = 1:10;
 %For each collection of synthetic data 
-%for dataCtr = 1:4
+for dataCtr = 1:4
 
     %Set the data to the currently used synthesized data
     %currSynthData = synthCell{dataCtr};
@@ -35,18 +35,19 @@ cvErrMat = zeros([10 2]); cvErrMat(:,1) = 1:10;
     [lowestKErr,lowestKErrInd] = min(cvErrMat(:,2));
 
     %graph cvErrMat to show k vs. classification error 
-%         clear clf;
-%         figure();
-%         scatter(cvErrMat(:,1), cvErrMat(:,2));
-%         title('Average Misclassification Error Rate');
-%         xlabel('Number of Folds'); 
-%         ylabel('Misclassification Error');
+        clear clf;
+        figure();
+        scatter(cvErrMat(:,1), cvErrMat(:,2));
+        title('Average Misclassification Error Rate');
+        xlabel('Number of Folds'); 
+        ylabel('Misclassification Error');
 
     %Call decision tree implementation 
     dTree = dTreeTrain(synthMeas);
 
     %Keep track of the kNN labels for each test point (row)
     predictLabs = zeros([numel(testData(:,1)) lowestKErrInd]);
+    posResults = []; negResults = [];
     numCorrect = 0;
     %best k value is found as lowestKerrInd, the index for lowest k
     %Iterate through each of the test points 
@@ -58,13 +59,18 @@ cvErrMat = zeros([10 2]); cvErrMat(:,1) = 1:10;
         %For all predicted labs check that predicted matches test lab
         for labCtr = 1:numel(predictLabs(testPtCtr,:))
             if predictLabs(testPtCtr,labCtr) == testData(testPtCtr,3)
+                posResults = [posResults testData(testPtCtr,1:2)];
                 numCorrect = numCorrect + 1;
+            else
+                negResults = [negResults testData(testPtCtr,1:2)];
             end
         end
 
     end
-
-    kNNAccuracy = numCorrect / numel(predictLabs)
+    
     %Graph results using decision boundary
+    decision_boundary(posResults, negResults);
+    kNNAccuracy = numCorrect / numel(predictLabs)
 
-%end
+
+end

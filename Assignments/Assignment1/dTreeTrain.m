@@ -16,6 +16,9 @@ function dTree = dTreeTrain(meas)
     
     %root = baseNode; root.tableData = meas; root.depth = 1;
     dTree = splitTree( baseNode, meas, 1);
+    
+    
+    
 %     %For all features (along the column)
 %     for featCtr = 1:numel(meas(1,:))
 %         %sort the features

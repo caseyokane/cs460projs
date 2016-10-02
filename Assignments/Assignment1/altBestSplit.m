@@ -5,8 +5,8 @@ function altBestSplit = altBestSplit( node )
         %determine all splits
         %For each split 
             %Calculate gini index
-                %calculate left gini
-                %calculate right gini
+                %calculate left gini recursively calling on left node
+                %calculate right gini recursively calling on right node
             %giniInd = numel(lBranch)/totalBranchlengh *lGini + numel(rBranch)/totalBranchlengh *rGini
             %if giniInd < giniMin
                 %giniMin = giniInd;
