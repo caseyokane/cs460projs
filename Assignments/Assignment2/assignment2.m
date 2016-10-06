@@ -20,25 +20,37 @@ tTest = 1:size(hw2Test,1);
 %Need to find the model for orders 0 through 4
 
 %Append column of 1's to account for the bias term.
-hw2Train = [ones(size(hw2Train,1), 1), hw2Train];
+hw2TrainNorm = [ones(size(hw2Train,1), 1), hw2Train];
 %Use normal equation method for linear regression to train 5 models
-currModel = fitLinRegNormal(hw2Train(:,1:2), hw2Train(:,end));
+currNormModel = fitLinRegNormal(hw2TrainNorm(:,1:2), hw2TrainNorm(:,end));
 
 %Normalize feature space for GD
-    %subtract the mean and divide by the std dev of each column
+hw2TrainGD, meanMat, stdDev = normalizeFeatures(hw2Train);
+%Account for bias
+hw2TrainGD = [ones(size(hw2Train,1),1), hw2TrainGD];
 
-%Use gradient descent method for linear regression to train 5 models
+%Use gradient descent method for linear regression 
+currGDModel = fitLinRegGD(data, labels, numIter, learnRate);
 
 %predict labels using current models 
-normLabels = predictLinearReg(currModel, hw2Train);
+normLabels = predictLinearReg(currNormModel, hw2Train);
 tNormRslt = 1:size(normLabels,1);
+%testLspace = linspace(-2, 2);
+%trainLspace = linspace(min(normLabels(:,2)), max(normLabels(:,2)), size(normLabels,1));
 
 %using the results from fitLinRegNormal, form a polynomial to plot 
 figure(1); clf;
-scatter(tTrain, hw2Train(:,3),25,'green')
+%scatter(testLspace, hw2Train(:,2),25,'green')
+%scatter(trainLspace, hw2Train(:,2),25,'green')
+
+%TODO: Maybe change this?
+plot(hw2Train(:,2), hw2Train(:,3), 'og')
 hold on;
-scatter(tTest, hw2Test(:,2),25,'red')
-plot(tNormRslt, normLabels(:,3))
+%scatter(xLspace, hw2Test(:,1),25,'red')
+%scatter(testLspace, hw2Test(:,2),25,'red') 
+plot(hw2Test(:,1), hw2Test(:,2), 'or')
+plot(trainLspace, normLabels(:,1))
+title('Order Linear Regression using normal prediction')
 xlabel('Iteration')
 ylabel('Normal Prediction Value')
 
