@@ -8,6 +8,11 @@ hw2Train = importdata('Data/hw2.train');
 hw2Test = importdata('Data/hw2.test');
 housingData = importdata('Data/housing.data');
 
+%initialize variables that will be used later:
+
+%For graphing:
+tTrain = 1:size(hw2Train,1);
+tTest = 1:size(hw2Test,1);
 
 %Part 1 
 
@@ -17,7 +22,7 @@ housingData = importdata('Data/housing.data');
 %Append column of 1's to account for the bias term.
 hw2Train = [ones(size(hw2Train,1), 1), hw2Train];
 %Use normal equation method for linear regression to train 5 models
-currModel = fitLinRegNormal(hw2Train(:,1:2), hw2(train(:,end)));
+currModel = fitLinRegNormal(hw2Train(:,1:2), hw2Train(:,end));
 
 %Normalize feature space for GD
     %subtract the mean and divide by the std dev of each column
@@ -25,13 +30,19 @@ currModel = fitLinRegNormal(hw2Train(:,1:2), hw2(train(:,end)));
 %Use gradient descent method for linear regression to train 5 models
 
 %predict labels using current models 
-
+normLabels = predictLinearReg(currModel, hw2Train);
+tNormRslt = 1:size(normLabels,1);
 
 %using the results from fitLinRegNormal, form a polynomial to plot 
-syms x; currPoly = 0;
-for iCtr = 1:size(currModel,1)
-    currPoly = currPoly + double(currModel(iCtr,:) .* x^(iCtr-1));
-end
+figure(1); clf;
+scatter(tTrain, hw2Train(:,3),25,'green')
+hold on;
+scatter(tTest, hw2Test(:,2),25,'red')
+plot(tNormRslt, normLabels(:,3))
+xlabel('Iteration')
+ylabel('Normal Prediction Value')
+
+hold off;
 
 %Compute MSE for both methods
 
