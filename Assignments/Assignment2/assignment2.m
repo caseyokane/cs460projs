@@ -9,6 +9,9 @@ hw2Test = importdata('Data/hw2.test');
 housingData = importdata('Data/housing.data');
 
 %initialize variables that will be used later:
+%For gradient descent
+learnRate = 0.01;
+numIter = 1000;
 
 %For graphing:
 tTrain = 1:size(hw2Train,1);
@@ -19,43 +22,42 @@ tTest = 1:size(hw2Test,1);
 %First make sure matrix is set up in correct order for current fitting
 %Need to find the model for orders 0 through 4
 
+%INSIDE FOR LOOP HERE
+
+%For data use Feats, labels use Labels
+trainFeats = hw2Train(:,1:end-1); 
+trainLabels = hw2Train(:,end);
+testFeats = hw2Test(:,1:end-1);
+testLabels = hw2Test(:,end);
+[numRows,numFeats] = size(trainFeats);
+
 %Append column of 1's to account for the bias term.
-hw2TrainNorm = [ones(size(hw2Train,1), 1), hw2Train];
+hw2TrainNorm = [ones(numRows, 1), trainFeats];
 %Use normal equation method for linear regression to train 5 models
-currNormModel = fitLinRegNormal(hw2TrainNorm(:,1:2), hw2TrainNorm(:,end));
+currNormModel = fitLinRegNormal(hw2TrainNorm, trainLabels);
 
 %Normalize feature space for GD
-hw2TrainGD, meanMat, stdDev = normalizeFeatures(hw2Train);
+[hw2TrainGD, meanMat, stdDev] = normalizeFeatures(trainFeats);
+
 %Account for bias
-hw2TrainGD = [ones(size(hw2Train,1),1), hw2TrainGD];
+hw2TrainGD = [ones(numRows,1), trainFeats];
 
 %Use gradient descent method for linear regression 
-currGDModel = fitLinRegGD(data, labels, numIter, learnRate);
+currGDModel = fitLinRegGD(hw2TrainGD, trainLabels, numIter, learnRate);
 
 %predict labels using current models 
-normLabels = predictLinearReg(currNormModel, hw2Train);
-tNormRslt = 1:size(normLabels,1);
-%testLspace = linspace(-2, 2);
-%trainLspace = linspace(min(normLabels(:,2)), max(normLabels(:,2)), size(normLabels,1));
-
-%using the results from fitLinRegNormal, form a polynomial to plot 
-figure(1); clf;
-%scatter(testLspace, hw2Train(:,2),25,'green')
-%scatter(trainLspace, hw2Train(:,2),25,'green')
-
-%TODO: Maybe change this?
-plot(hw2Train(:,2), hw2Train(:,3), 'og')
-hold on;
-%scatter(xLspace, hw2Test(:,1),25,'red')
-%scatter(testLspace, hw2Test(:,2),25,'red') 
-plot(hw2Test(:,1), hw2Test(:,2), 'or')
-plot(trainLspace, normLabels(:,1))
-title('Order Linear Regression using normal prediction')
-xlabel('Iteration')
-ylabel('Normal Prediction Value')
-
-hold off;
+normLabels = predictLinearReg(currNormModel, hw2TrainNorm);
+gdLabels = predictLinearReg(currGDModel, hw2TrainGD);
+tNormRslt = numRows;
 
 %Compute MSE for both methods
 
 %plot the MSE graph for both solutions 
+
+%Plots the values in here. TODO Need to update first argument.
+plotPrediction(0, trainFeats, trainLabels, testFeats, testLabels, normLabels, ' normal ')
+plotPrediction(0, trainFeats, trainLabels, testFeats, testLabels, gdLabels, ' gradient descent ')
+
+
+
+%Part 2 

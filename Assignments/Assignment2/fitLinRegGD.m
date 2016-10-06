@@ -3,7 +3,7 @@ function model = fitLinRegGD(data, labels, numIter, learnRate)
 
 
     %Initialize model to matrix based on feature size
-    model = zeros(size(X,2),1);
+    model = zeros(size(data,2),1);
     tempTheta = model;
     
     for iIter = 1:numIter
