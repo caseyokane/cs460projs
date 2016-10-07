@@ -7,7 +7,7 @@ function model = fit_lr_gd(data, labels, numIter, learnRate)
     tempTheta = model;
     
     for iIter = 1:numIter
-        %store temporary 
+        %store temporary result
         temp = (data * model) - labels;
         
         %For every theta, compute the value
