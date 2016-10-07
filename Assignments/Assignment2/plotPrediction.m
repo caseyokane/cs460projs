@@ -1,8 +1,12 @@
 %Helper function used to plot result given specific information
 function plotPrediction(numIter, trFeats, trLabels, teFeats, teLabels, predLabels, method)
 
-    currTitle = strcat(num2str(numIter), 'Order Linear Regression using ', method, ' prediction');
-    trainLspace = linspace(min(predLabels(:,2)), max(predLabels(:,2)), size(predLabels,1));
+    currOrder = abs(1 - numIter);
+    currTitle = strcat(num2str(currOrder), ' Order Linear Regression using ', method, ' prediction');
+    %line space for linear regression prediction 
+    labMat = predLabels(:,1);
+    trainLspace = linspace(min(labMat), max(labMat), size(predLabels,1));
+    %trainLspace = linspace(-1.5, 1.5);
 
     
     
@@ -17,7 +21,8 @@ function plotPrediction(numIter, trFeats, trLabels, teFeats, teLabels, predLabel
     %scatter(xLspace, hw2Test(:,1),25,'red')
     %scatter(testLspace, hw2Test(:,2),25,'red') 
     plot(teFeats, teLabels, 'or')
-    plot(trainLspace, predLabels(:,1))
+    %plot(trainLspace, predLabels(:,1))
+    plot(trainLspace, polyval(predLabels,trainLspace))
     title(currTitle)
     xlabel('Feature values')
     ylabel('Label values')

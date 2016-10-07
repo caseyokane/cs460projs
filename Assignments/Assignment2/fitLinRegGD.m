@@ -1,7 +1,6 @@
 %Linear regression using Gradient Descent
 function model = fitLinRegGD(data, labels, numIter, learnRate)
 
-
     %Initialize model to matrix based on feature size
     model = zeros(size(data,2),1);
     tempTheta = model;

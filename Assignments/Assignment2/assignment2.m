@@ -17,47 +17,97 @@ numIter = 1000;
 tTrain = 1:size(hw2Train,1);
 tTest = 1:size(hw2Test,1);
 
-%Part 1 
+%%%Part 1 
 
-%First make sure matrix is set up in correct order for current fitting
-%Need to find the model for orders 0 through 4
-
-%INSIDE FOR LOOP HERE
-
-%For data use Feats, labels use Labels
+%Simplify data collection
 trainFeats = hw2Train(:,1:end-1); 
 trainLabels = hw2Train(:,end);
 testFeats = hw2Test(:,1:end-1);
 testLabels = hw2Test(:,end);
-[numRows,numFeats] = size(trainFeats);
+
+[numRows,numFeats] = size(currTrainFeats);
 
 %Append column of 1's to account for the bias term.
-hw2TrainNorm = [ones(numRows, 1), trainFeats];
-%Use normal equation method for linear regression to train 5 models
-currNormModel = fitLinRegNormal(hw2TrainNorm, trainLabels);
+trainFeats = [ones(numRows, 1), trainFeats];
 
-%Normalize feature space for GD
-[hw2TrainGD, meanMat, stdDev] = normalizeFeatures(trainFeats);
+%Need to find the model for orders 2,3,4
+%Order 2 will find the square of the x values
+ord2 = trainFeats.^2;
+%Order 3 will find the cube of the x values
+ord3 = trainFeats.^3;
+%Order 4 will find multiply x by a constant value
+ord4 = trainFeats.*2;
 
-%Account for bias
-hw2TrainGD = [ones(numRows,1), trainFeats];
+%Append new orders to the end of the features matrix
+trainFeats = [trainFeats, ord2, ord3, ord4];
 
-%Use gradient descent method for linear regression 
-currGDModel = fitLinRegGD(hw2TrainGD, trainLabels, numIter, learnRate);
 
-%predict labels using current models 
-normLabels = predictLinearReg(currNormModel, hw2TrainNorm);
-gdLabels = predictLinearReg(currGDModel, hw2TrainGD);
-tNormRslt = numRows;
+for iOrd = 1:5
+    
+    %For data use Feats, labels use Labels
+    currTrainFeats = trainFeats(:,1:iOrd); 
+    currTrainLabels = trainLabels;
+    %currTrainLabels = hw2Train(:,end);
+    %currTestFeats = hw2Test(:,1:end-1);
+    currTestFeats = testFeats;
+    currTestLabels = testLabels;
+    
+    %Use normal equation method for linear regression to train 5 models
+    currNormModel = fitLinRegNormal(currTrainFeats, currTrainLabels);
 
-%Compute MSE for both methods
+    %Normalize feature space for GD
+    [hw2TrainGD, meanMat, stdDev] = normalizeFeatures(currTrainFeats);
 
-%plot the MSE graph for both solutions 
+    %Use gradient descent method for linear regression 
+    currGDModel = fitLinRegGD(currTrainFeats, currTrainLabels, numIter, learnRate);
 
-%Plots the values in here. TODO Need to update first argument.
-plotPrediction(0, trainFeats, trainLabels, testFeats, testLabels, normLabels, ' normal ')
-plotPrediction(0, trainFeats, trainLabels, testFeats, testLabels, gdLabels, ' gradient descent ')
+    %predict labels using current models 
+    normLabels = predictLinearReg(currNormModel, currTrainFeats);
+    gdLabels = predictLinearReg(currGDModel, currTrainFeats);
+    tNormRslt = numRows;
+    
 
+    %Compute MSE for both methods
+
+    %plot the MSE graph for both solutions 
+
+    %Plots the values in here. TODO Need to update first argument.
+    plotPrediction(iOrd, trainFeats(:,2), trainLabels, testFeats, testLabels, normLabels, ' normal ')
+    %plotPrediction(1, currTrainFeats, currTrainLabels, currTestFeats, currTestLabels, currNormModel, ' normal ')
+    %plotPrediction(1, currTrainFeats, currTrainLabels, currTestFeats, currTestLabels, gdLabels, ' gradient descent ')
+
+end 
 
 
 %Part 2 
+
+%F_orig contains the original data (row = example)
+
+%Make some additional feature types
+% F = [F_orig F_orig.^2 log(F_orig) 1]
+% 
+% # try all size-2 subsets of features
+% min_error = Infinity
+% for i = 1:size(F,2)
+%     for j = i+1:size(F,2)
+%         # run cross validation
+%         err = 0            F_local = F(:, [i,j]);
+%         for fold = 1:k
+%              fit regression model from F_local to target to k-th training fold
+%              err = err + error on k-th testing fold
+%         end
+%  
+%         if err < min_error
+%             bestModel = [i j];
+%             min_error = err;
+%         end
+%     end
+% end
+% 
+% fit regression model to full dataset
+% 
+% compute MSE on full dataset
+%select the optimal model (minimum mean-squared error)
+%Collect any two compatible pairs of columns and create a new feature space
+
+

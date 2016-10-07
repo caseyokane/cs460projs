@@ -2,5 +2,6 @@
 function labels = predictLinearReg(model, data)
 
     labels = polyval(model, data);
+    %labels = model * data;
 
 end
