@@ -1,21 +1,11 @@
-function  hTheta = logRegHyp( data )
-
-    %Using the sample points, determine Theta.' * x
-    %Rename data set with friendlier variables
-    feats = data(:,1:2); labs = data(:,3);
-
-    %TODO: CLEAN BELOW
-    %Get dimesions of the data set 
-    [rows, cols] = size(feats);
-    %Set up data matrix to include bias term
-    X = [ones(rows,1), feats];
+function  [hyp, Xvals] = logRegHyp(data, theta)
+%logRegHyp determines the hypothesis given the original dataset   
     
-    %Initialize parameter values equal to 0 initially
-        %TODO: Maybe change cols +1 to size()
-    hTheta = zeros(cols+1, 1);
-    
+    %Store the feature space for calculating the sigmoid while including a 
+    %bias term
+    Xvals = [ones(size(data,1),1) data(:,1:2)];
+
     %Compute the cost value using the sigmoid function
-    hTheta = sigmoid(X * hTheta);
-
+    hyp = sigmoid(Xvals * theta');
 end
 
