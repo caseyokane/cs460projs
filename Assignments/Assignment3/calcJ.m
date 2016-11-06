@@ -1,30 +1,40 @@
-function [ J, grad ] = calcJ(theta, data, lamda)
+function [ J, NewGrad ] = calcJ(theta, data, lambda)
 %calcJ is used to represent the logistic regression cost function 
 
+    global costs;
     %First, compute the hypothesis using the logRegHyp function
-    [hyp, Xvals] = logRegHyp(data,theta);
+    [hypVals, Xvals] = logRegHyp(data,theta);
     %Determine the number of samples for the cost function
     numSamples = size(data(:,1),1);
     %Initialize the gradient values
     grad = zeros(size(theta'));
     Yvals = data(:,end);
     
-    %Implement the log liklihood cost function
-    J = ((-1/numSamples) * sum((Yvals .* log(hyp)) + (1 -Yvals).*log(1-hyp)));
+    %Implement the log liklihood cost function as discussed during lecture
+    J = ((-1/numSamples) * sum((Yvals .* log(hypVals)) + (1 -Yvals).*log(1-hypVals)));
     
-    %TODO: CLEAN UP and document
+    %Continue to compute the gradient for each sample
     for i =1:numSamples
-        grad = grad + ((hyp(i) - Yvals(i)) * Xvals(i,:)');
+        %Use gradient computation formula as mentioned during lecture
+        grad = grad + (Xvals(i,:)' * (hypVals(i) - Yvals(i)));
     end
-    grad = 1/numSamples * grad;
     
-%     %If regularization is necessary (for quadratic FS) then use lambda
+    %Return New gradient using the ideal one
+    NewGrad = 1/numSamples * grad;
+    
+    %After cost value has been found append it to the costs list
+    if(isnan(J) ~= 1)
+        costs = [costs J];
+    end
+    
+%     QUAD: Would finish if had more time, feel that I'm missing some things though 
+%     If regularization is necessary (for quadratic FS) then use lambda
 %     if(lamda ~= 0)
 %         %Compute regularized cost where lambda is provided and ignoring the
 %         %constant column of theta
-%         J = J + lambda /(2*numSamples) * sum(theta(2:end).^2);
+%         J = J + lambda /(2*numSamples);
 %         %Compute the regularized gradient 
-%         grad = (1/numSamples) * grad + ((lambda/numSample) * [0:theta(2:end)]);
+%         grad = (1/numSamples) * grad + ((lambda/numSample));
 %     end
     
 end
