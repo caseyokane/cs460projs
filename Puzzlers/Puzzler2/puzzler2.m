@@ -1,6 +1,6 @@
-% CS460 Puzzler 2 - Implement Gradient Descent
+% CS460 Puzzler 3 - SVMs and Quadratic Programming ]
 % Casey O'Kane
-% 10/1/16
+% 10/8/16
 
 %First, find the derivative for the function with a symbol
 syms x;
