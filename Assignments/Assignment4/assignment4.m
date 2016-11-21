@@ -10,49 +10,40 @@ lab2string = importdata('data/caltechLabel2string.dat');
 testData = importdata('data/caltechTestData.dat');
 
 %Currently plan on using Tree Bagger Library
-numTrees = 50; 
+numTrees = 125; 
+
+%Account for overfitting by randomly selecting 75% of data to train on 
+newInd = randperm(size(trainData,1));
+newTrainData = trainData(newInd(1:1080),:);
+newTrainLabs = trainLabs(newInd(1:1080),:);
+%Store the remaining values for later testing
+remTrainData = trainData(newInd(1081:1440),:);
+remTrainLabs = trainLabs(newInd(1081:1440),:);
 
 %Train a Tree Bagger object using the training data and the training labels
-RandomForest = TreeBagger(numTrees, trainData, trainLabs, 'Method', 'classification');
+RandomForest = TreeBagger(numTrees, newTrainData, newTrainLabs, 'Method', 'classification');
 
-%Implement cross validation
-cvMdl = cvpartition(trainLabs,'k',4);
-cvErr = zeros(cvMdl.NumTestSets,1);
-
-%Train a random forest for the current iteration 
-cvForest = TreeBagger(50, trainData(trainVals), trainLabs(trainVals), 'Method', 'classification');
-
-for i = 1:cvMdl.NumTestSets
-
-   %Store the training and testing indices 
-   trainVals = cvMdl.training(i);
-   testVals = cvMdl.test(i);
- 
-   %Use the forest to predict test labels 
-   predictedTestLabs = cvForest.predict(trainData(testVals));
-   
-   %Get resulting test labels
-   actTestLabs = textscan(sprintf('%i\n',trainLabs(testVals)'),'%s');
-   actTestLabs = actTestLabs{1}; 
-   
-   %determine amount of times labels don't match
-   cvErr(i) = sum(~strcmp(predictedTestLabs, actTestLabs))
-
-
-end
-
-%Calculate the total CV error 
-finalCVerr = sum(cvErr)/sum(cvMdl.TestSize)
-
-
-%Predict result using caltechTestData
+%Preform example prediction using remaining training data 
+predictedTrainLabs = RandomForest.predict(remTrainData);
 
 %Create confusion Matrix 
-ConfusMat = zeros(18);
-    %increment counter for each training example seen
-    %matrix where rows are true and columns are predicted 
+S = sprintf('%s*', predictedTrainLabs{:});
+predLabsDouble = sscanf(S, '%f*');
+Conf_Mat = confusionmat(remTrainLabs, predLabsDouble);
 
 %Use a heatmat visualization with imagsc(confusionMatrix)
+figure(1); clf
+imagesc(Conf_Mat);
+title('Confusion Matrix for 150 Trees');
+xlabel('Predicted Labels');
+ylabel('Actual Labels');
 
-%store results in caltechPredictLabel.dat
+%Calculate true positive rate 
+actTestLabs = textscan(sprintf('%i\n',remTrainLabs'),'%s');
+actTestLabs = actTestLabs{1};    
+mdlErr = sum(~strcmp(predictedTrainLabs, actTestLabs));
+finalMdlErr = sum(mdlErr)/size(predictedTrainLabs,1);
+TPR = (1 - finalMdlErr)*100
 
+%presdict test results and store in caltechPredictLabel.dat
+predictedTestLabs = RandomForest.predict(testData);
